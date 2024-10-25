@@ -3,7 +3,7 @@ project(c_task)
 
 set(CMAKE_CXX_STANDARD 20)
 
-file(GLOB LIB_SOURCES "lib/*.cpp" "lib/*.c" "lib/*.h")
+file(GLOB_RECURSE LIB_SOURCES "lib/*.cpp" "lib/*.c" "lib/*.h")
 add_library(c_task_lib ${LIB_SOURCES})
 add_executable(c_task main.cpp)
 target_link_libraries(c_task c_task_lib)
@@ -24,3 +24,6 @@ target_link_libraries(test_a gtest_main c_task_lib)
 add_test(NAME test_a COMMAND test_a)
 
 
+add_executable(test_task_graph test/test_task_graph.cpp)
+target_link_libraries(test_task_graph gtest_main c_task_lib)
+add_test(NAME TEST_TASK_GRAPH COMMAND TEST_TASK_GRAPH)
