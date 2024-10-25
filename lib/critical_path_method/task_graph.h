@@ -27,6 +27,7 @@ public:
     vector<PathNode*> get_roots();
     vector<PathNode*> get_leaves();
     vector<PathNode> nodes;
+    tuple<string, int> result();
 
 };
 

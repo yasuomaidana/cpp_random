@@ -161,3 +161,27 @@ vector<PathNode*> TaskGraph::get_leaves()
     }
     return leaves;
 }
+
+tuple<string, int> TaskGraph::result()
+{
+    if (const auto leaves = get_leaves(); leaves.size() > 1)
+    {
+        return make_tuple("error", -1);
+    }
+    calculate_forward();
+    calculate_backward();
+    const auto critical_path = calculate_critical_path();
+    int duration = calculate_duration();
+    string critical_path_str = "";
+
+    for (int i = 0; i < critical_path.size(); i++)
+    {
+        critical_path_str += critical_path[i].task_name;
+        if (i < critical_path.size() - 1)
+        {
+            critical_path_str += " -> ";
+        }
+    }
+
+    return make_tuple(critical_path_str, duration);
+}

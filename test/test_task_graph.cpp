@@ -13,6 +13,49 @@
 
 using namespace std;
 
+void format_output(TaskGraph graph)
+{
+    auto critical_path = graph.calculate_critical_path();
+
+    for (const auto& node : critical_path)
+    {
+        cout << node.task_name << " ";
+    }
+    cout << endl;
+
+    cout << "Days: " << critical_path.back().forward << endl;
+}
+
+void print2DArray(const vector<vector<int>>& arr) {
+    cout << "[";
+    for (size_t i = 0; i < arr.size(); ++i) {
+        cout << "[";
+        for (size_t j = 0; j < arr[i].size(); ++j) {
+            cout << arr[i][j];
+            if (j < arr[i].size() - 1) {
+                cout << ", ";
+            }
+        }
+        cout << "]";
+        if (i < arr.size() - 1) {
+            cout << ", ";
+        }
+    }
+    cout << "]" << endl;
+}
+
+void printTasks(const vector<tuple<string, int>>& tasks) {
+    cout << "[";
+    for (size_t i = 0; i < tasks.size(); ++i) {
+        // cout << "('" << get(tasks[i]) << "', " << get(tasks[i]) << ")";
+        cout <<"('" << get<0>(tasks[i]) << "'," << get<1>(tasks[i])<< ")";
+        if (i < tasks.size() - 1) {
+            cout << ", ";
+        }
+    }
+    cout << "]" << endl;
+}
+
 // Include the header file where your functions are declared
 TEST(TEST_GET_PATH, Test1)
 {
@@ -40,21 +83,20 @@ TEST(TEST_GET_PATH, Test1)
         {0, 0, 0, 0, 0, 0, 1, 0}, //e
         {0, 0, 0, 0, 0, 0, 1, 0}, //f
         {0, 0, 0, 0, 0, 0, 0, 0}, //g
-        {0, 0, 0, 0, 0, 1, 0, 0}  //h
+        {0, 0, 0, 0, 0, 1, 0, 0} //h
     };
     TaskGraph graph(tasks, dependencies);
     const auto roots = graph.get_roots();
     EXPECT_EQ(roots.size(), 2);
     const auto leaves = graph.get_leaves();
 
-    graph.calculate_forward();
-    graph.calculate_backward();
-    const auto critical_path = graph.calculate_critical_path();
-    for (const auto& node : critical_path)
-    {
-        cout << node.task_name << " ";
-    }
-    cout << "Days: " << graph.calculate_duration() << endl;
+    // graph.calculate_forward();
+    // graph.calculate_backward();
+    // format_output(graph);
+    const auto result = graph.result();
+    printTasks(tasks);
+    print2DArray(dependencies);
+    cout << get<0>(result) << " " << get<1>(result) << endl;
     EXPECT_EQ(leaves.size(), 1);
     EXPECT_EQ(1, 1);
 }
