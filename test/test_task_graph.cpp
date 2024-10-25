@@ -10,50 +10,32 @@
 #include <unordered_set>
 
 #include "../lib/critical_path_method/task_graph.h"
+#include "../lib/formatter/formatter.cpp"
 
 using namespace std;
 
-void format_output(TaskGraph graph)
+
+
+
+tuple<string, int> format_output(vector<tuple<string, int>> tasks, const vector<vector<int>> dependencies, int test_i)
 {
+    cout << "Unit Test  " << test_i << " Input:"<<endl;
+    TaskGraph graph(tasks, dependencies);
+    cout << "task_durations = ";
+    print_list_tuple(tasks);
+
+    cout << "dependencies = ";
+    print2DArray(dependencies);
+
+    graph.calculate_forward();
+    graph.calculate_backward();
     auto critical_path = graph.calculate_critical_path();
 
-    for (const auto& node : critical_path)
-    {
-        cout << node.task_name << " ";
-    }
+    auto result = graph.result();
+    cout << "sequence = " << get<0>(result) << endl;
+    cout << "duration = " << get<1>(result) << endl;
     cout << endl;
-
-    cout << "Days: " << critical_path.back().forward << endl;
-}
-
-void print2DArray(const vector<vector<int>>& arr) {
-    cout << "[";
-    for (size_t i = 0; i < arr.size(); ++i) {
-        cout << "[";
-        for (size_t j = 0; j < arr[i].size(); ++j) {
-            cout << arr[i][j];
-            if (j < arr[i].size() - 1) {
-                cout << ", ";
-            }
-        }
-        cout << "]";
-        if (i < arr.size() - 1) {
-            cout << ", ";
-        }
-    }
-    cout << "]" << endl;
-}
-
-void printTasks(const vector<tuple<string, int>>& tasks) {
-    cout << "[";
-    for (size_t i = 0; i < tasks.size(); ++i) {
-        // cout << "('" << get(tasks[i]) << "', " << get(tasks[i]) << ")";
-        cout <<"('" << get<0>(tasks[i]) << "'," << get<1>(tasks[i])<< ")";
-        if (i < tasks.size() - 1) {
-            cout << ", ";
-        }
-    }
-    cout << "]" << endl;
+    return result;
 }
 
 // Include the header file where your functions are declared
@@ -85,18 +67,43 @@ TEST(TEST_GET_PATH, Test1)
         {0, 0, 0, 0, 0, 0, 0, 0}, //g
         {0, 0, 0, 0, 0, 1, 0, 0} //h
     };
-    TaskGraph graph(tasks, dependencies);
-    const auto roots = graph.get_roots();
-    EXPECT_EQ(roots.size(), 2);
-    const auto leaves = graph.get_leaves();
+    tuple<string, int> result = format_output(tasks, dependencies, 1);
 
-    // graph.calculate_forward();
-    // graph.calculate_backward();
-    // format_output(graph);
-    const auto result = graph.result();
-    printTasks(tasks);
-    print2DArray(dependencies);
-    cout << get<0>(result) << " " << get<1>(result) << endl;
-    EXPECT_EQ(leaves.size(), 1);
+    string expected_result = "A -> B -> D -> E -> G";
+    int expected_duration = 7;
+    EXPECT_EQ(get<0>(result), expected_result);
+    EXPECT_EQ(get<1>(result), expected_duration);
     EXPECT_EQ(1, 1);
+}
+
+
+// // Include the header file where your functions are declared
+// TEST(TEST_GET_PATH2, Test1)
+// {
+//     // Example function declarations (replace with actual ones)
+//     // std::unordered_set<float> get_payments_diff_set(const std::vector<float>& payments);
+//     // int type_of_user(const std::unordered_set<float>& payments_diff_set, const std::vector<float>& payments);
+//     // int calculate_m(const std::unordered_set<float>& payments_diff_set, const std::vector<float>& payments);
+//     // std::tuple<float, int, int> calculate_interest_rate_period(const int allowed_years, const std::vector<float>& debt, const std::vector<float>& payments);
+//     const vector<tuple<string, int>> tasks = {
+//         make_tuple("A", 10),
+//         make_tuple("B", 12),
+//     };
+//     const vector<vector<int>> dependencies = {
+//         // a  b  c  d  e  f  g  h
+//         {0, 1}, //a
+//         {0, 0}, //b
+//     };
+//     tuple<string, int> result = format_output(tasks, dependencies, 2);
+//
+//     string expected_result = "A -> B -> D -> E -> G";
+//     int expected_duration = 7;
+//     EXPECT_EQ(get<0>(result), expected_result);
+//     EXPECT_EQ(get<1>(result), expected_duration);
+//     EXPECT_EQ(1, 1);
+// }
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
