@@ -12,20 +12,20 @@ using namespace std;
 
 class PathNode
 {
-    string task_name;
-    int duration;
-    int forward;
-    int backward;
-
 public:
     PathNode(string task_name, int duration);
 
     void add_successor(PathNode& successor);
     void add_predecessor(PathNode& predecessor);
     bool operator<(const PathNode& other) const;
+    bool operator>(const PathNode& other) const;
 
     vector<PathNode*> successors;
     vector<PathNode*> predecessors;
+    string task_name;
+    int duration;
+    int forward = 0;
+    int backward = 0;
 };
 
 

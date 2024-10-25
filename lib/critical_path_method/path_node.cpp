@@ -27,3 +27,8 @@ bool PathNode::operator<(const PathNode& other) const
 {
     return duration < other.duration;
 }
+
+bool PathNode::operator>(const PathNode& other) const
+{
+    return duration > other.duration;
+}

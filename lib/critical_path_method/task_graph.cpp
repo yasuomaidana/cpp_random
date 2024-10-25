@@ -4,6 +4,8 @@
 
 #include "task_graph.h"
 
+#include <iostream>
+
 TaskGraph::TaskGraph(const vector<tuple<string, int>>& tasks_durations, const vector<vector<int>>& dependencies)
 {
     this->dependencies = dependencies;
@@ -20,6 +22,30 @@ TaskGraph::TaskGraph(const vector<tuple<string, int>>& tasks_durations, const ve
                 nodes[i].add_successor(nodes[j]);
                 nodes[j].add_predecessor(nodes[i]);
             }
+        }
+    }
+}
+
+void TaskGraph::calculate_forward()
+{
+    auto roots = get_roots();
+
+    // priority_queue<PathNode, vector<PathNode>, greater<PathNode>> expand_forward;
+    stack<PathNode> expand_forward;
+    for (auto& root : roots)
+    {
+        root.forward = root.duration;
+        expand_forward.push(root);
+    }
+
+    while (!expand_forward.empty())
+    {
+        auto current = expand_forward.top();
+        expand_forward.pop();
+        for (auto& successor : current.successors)
+        {
+            successor->forward = max(successor->forward, current.forward + successor->duration);
+            expand_forward.push(*successor);
         }
     }
 }
