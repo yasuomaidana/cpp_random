@@ -7,6 +7,7 @@
 
 #include "path_node.h"
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -24,6 +25,7 @@ public:
     void calculate_critical_path();
     int calculate_duration();
     vector<PathNode> get_roots();
+    vector<PathNode> get_leaves();
 
 };
 

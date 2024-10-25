@@ -45,5 +45,7 @@ TEST(TEST_GET_PATH, Test1)
     TaskGraph graph(tasks, dependencies);
     const auto roots = graph.get_roots();
     EXPECT_EQ(roots.size(), 2);
+    const auto leaves = graph.get_leaves();
+    EXPECT_EQ(leaves.size(), 1);
     EXPECT_EQ(1, 1);
 }

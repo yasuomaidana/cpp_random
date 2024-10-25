@@ -28,9 +28,22 @@ vector<PathNode> TaskGraph::get_roots()
 {
     if (roots.empty())
     {
-        copy_if(nodes.begin(), nodes.end(), back_inserter(roots), [](const PathNode& node) {
-            return node.predecessors.empty();
-        });
+        copy_if(nodes.begin(), nodes.end(), back_inserter(roots),
+             [](const PathNode& node)
+             {
+                 return node.predecessors.empty();
+             });
     }
     return roots;
+}
+
+vector<PathNode> TaskGraph::get_leaves()
+{
+    vector<PathNode> leaves;
+    copy_if(nodes.begin(), nodes.end(), back_inserter(leaves),
+         [](const PathNode& node)
+         {
+             return node.successors.empty();
+         });
+    return leaves;
 }
