@@ -76,33 +76,6 @@ TEST(TEST_GET_PATH, Test1)
     EXPECT_EQ(1, 1);
 }
 
-
-// // Include the header file where your functions are declared
-// TEST(TEST_GET_PATH2, Test1)
-// {
-//     // Example function declarations (replace with actual ones)
-//     // std::unordered_set<float> get_payments_diff_set(const std::vector<float>& payments);
-//     // int type_of_user(const std::unordered_set<float>& payments_diff_set, const std::vector<float>& payments);
-//     // int calculate_m(const std::unordered_set<float>& payments_diff_set, const std::vector<float>& payments);
-//     // std::tuple<float, int, int> calculate_interest_rate_period(const int allowed_years, const std::vector<float>& debt, const std::vector<float>& payments);
-//     const vector<tuple<string, int>> tasks = {
-//         make_tuple("A", 10),
-//         make_tuple("B", 12),
-//     };
-//     const vector<vector<int>> dependencies = {
-//         // a  b  c  d  e  f  g  h
-//         {0, 1}, //a
-//         {0, 0}, //b
-//     };
-//     tuple<string, int> result = format_output(tasks, dependencies, 2);
-//
-//     string expected_result = "A -> B -> D -> E -> G";
-//     int expected_duration = 7;
-//     EXPECT_EQ(get<0>(result), expected_result);
-//     EXPECT_EQ(get<1>(result), expected_duration);
-//     EXPECT_EQ(1, 1);
-// }
-
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
