@@ -22,7 +22,7 @@ public:
     TaskGraph(const vector<tuple<string, int>>& tasks_durations, const vector<vector<int>>& dependencies);
     void calculate_forward();
     void calculate_backward();
-    string calculate_critical_path();
+    vector<PathNode> calculate_critical_path();
     int calculate_duration();
     vector<PathNode*> get_roots();
     vector<PathNode*> get_leaves();

@@ -77,11 +77,11 @@ void TaskGraph::calculate_backward()
     }
 }
 
-string TaskGraph::calculate_critical_path()
+vector<PathNode> TaskGraph::calculate_critical_path()
 {
     const auto roots = get_roots();
     PathNode critical_node = *roots[0];
-    string critical_path;
+    vector<PathNode> critical_path;
     for (const auto& root : roots)
     {
         if (root->backward == 0)
@@ -90,7 +90,7 @@ string TaskGraph::calculate_critical_path()
             break;
         }
     }
-    critical_path += critical_node.task_name;
+    critical_path.push_back(critical_node);
     stack<PathNode> expand_backward;
     expand_backward.push(critical_node);
     while (!expand_backward.empty())
@@ -101,12 +101,38 @@ string TaskGraph::calculate_critical_path()
         {
             if (predecessor.get().backward == current.forward)
             {
-                critical_path += "->" + predecessor.get().task_name;
+                critical_path.push_back(predecessor);
                 expand_backward.push(predecessor);
             }
         }
     }
     return critical_path;
+}
+
+int TaskGraph::calculate_duration()
+{
+    const auto critical_path = calculate_critical_path();
+    int number_days = 0;
+    int remaining_hours = 0;
+    for (const auto& node : critical_path)
+    {
+        constexpr int hours_per_day = 8;
+        int tasks_days = node.duration / hours_per_day;
+        int tasks_remaining_hours = node.duration % hours_per_day;
+        if (remaining_hours > 0 && tasks_days < 1 && tasks_remaining_hours + remaining_hours < hours_per_day)
+        {
+            number_days++;
+            remaining_hours = tasks_remaining_hours;
+            continue;
+        }
+        if (remaining_hours>0)
+        {
+            number_days++;
+        }
+        number_days += tasks_days;
+        remaining_hours = tasks_remaining_hours;
+    }
+    return number_days;
 }
 
 vector<PathNode*> TaskGraph::get_roots()

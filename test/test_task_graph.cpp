@@ -49,7 +49,12 @@ TEST(TEST_GET_PATH, Test1)
 
     graph.calculate_forward();
     graph.calculate_backward();
-    cout << graph.calculate_critical_path();
+    const auto critical_path = graph.calculate_critical_path();
+    for (const auto& node : critical_path)
+    {
+        cout << node.task_name << " ";
+    }
+    cout << "Days: " << graph.calculate_duration() << endl;
     EXPECT_EQ(leaves.size(), 1);
     EXPECT_EQ(1, 1);
 }
