@@ -48,6 +48,12 @@ TEST(TEST_GET_PATH, Test1)
     const auto leaves = graph.get_leaves();
 
     graph.calculate_forward();
+    graph.calculate_backward();
+
+    for (auto& node : graph.nodes)
+    {
+        cout << node.task_name << " " << node.forward << " " << node.backward << endl;
+    }
     EXPECT_EQ(leaves.size(), 1);
     EXPECT_EQ(1, 1);
 }

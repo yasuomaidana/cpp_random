@@ -13,7 +13,7 @@ using namespace std;
 
 class TaskGraph
 {
-    vector<PathNode> nodes;
+
     vector<vector<int>> dependencies;
 
     vector<PathNode> roots;
@@ -24,8 +24,9 @@ public:
     void calculate_backward();
     void calculate_critical_path();
     int calculate_duration();
-    vector<PathNode> get_roots();
-    vector<PathNode> get_leaves();
+    vector<PathNode*> get_roots();
+    vector<PathNode*> get_leaves();
+    vector<PathNode> nodes;
 
 };
 

@@ -13,15 +13,15 @@ using namespace std;
 class PathNode
 {
 public:
-    PathNode(string task_name, int duration);
+    PathNode(const string& task_name, int duration);
 
     void add_successor(PathNode& successor);
     void add_predecessor(PathNode& predecessor);
     bool operator<(const PathNode& other) const;
     bool operator>(const PathNode& other) const;
 
-    vector<PathNode*> successors;
-    vector<PathNode*> predecessors;
+    vector<reference_wrapper<PathNode>> successors;
+    vector<reference_wrapper<PathNode>> predecessors;
     string task_name;
     int duration;
     int forward = 0;

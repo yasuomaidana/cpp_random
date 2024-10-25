@@ -34,8 +34,8 @@ void TaskGraph::calculate_forward()
     stack<PathNode> expand_forward;
     for (auto& root : roots)
     {
-        root.forward = root.duration;
-        expand_forward.push(root);
+        root->forward = root->duration;
+        expand_forward.push(*root);
     }
 
     while (!expand_forward.empty())
@@ -44,32 +44,62 @@ void TaskGraph::calculate_forward()
         expand_forward.pop();
         for (auto& successor : current.successors)
         {
-            successor->forward = max(successor->forward, current.forward + successor->duration);
-            expand_forward.push(*successor);
+            successor.get().forward = max(successor.get().forward, current.forward + successor.get().duration);
+            expand_forward.push(successor);
         }
     }
 }
 
-vector<PathNode> TaskGraph::get_roots()
+void TaskGraph::calculate_backward()
 {
-    if (roots.empty())
+    auto leaves = get_leaves();
+    stack<PathNode> expand_backward;
+    for (auto& leaf : leaves)
     {
-        copy_if(nodes.begin(), nodes.end(), back_inserter(roots),
-             [](const PathNode& node)
-             {
-                 return node.predecessors.empty();
-             });
+        leaf->backward = leaf->forward - leaf->duration;
+        expand_backward.push(*leaf);
     }
+    while (!expand_backward.empty())
+    {
+        auto current = expand_backward.top();
+        expand_backward.pop();
+        for (auto& predecessor : current.predecessors)
+        {
+            int late_finish = current.backward;
+            for (auto& successor : predecessor.get().successors)
+            {
+                late_finish = min(late_finish, successor.get().backward);
+            }
+
+            predecessor.get().backward = late_finish - predecessor.get().duration;
+            expand_backward.push(predecessor);
+        }
+    }
+}
+
+vector<PathNode*> TaskGraph::get_roots()
+{
+    vector<PathNode*> roots;
+    for (auto& node : nodes)
+    {
+        if (node.predecessors.empty())
+        {
+            roots.push_back(&node);
+        }
+    }
+
     return roots;
 }
 
-vector<PathNode> TaskGraph::get_leaves()
+vector<PathNode*> TaskGraph::get_leaves()
 {
-    vector<PathNode> leaves;
-    copy_if(nodes.begin(), nodes.end(), back_inserter(leaves),
-         [](const PathNode& node)
-         {
-             return node.successors.empty();
-         });
+    vector<PathNode*> leaves;
+    for (auto& node : nodes)
+    {
+        if (node.successors.empty())
+        {
+            leaves.push_back(&node);
+        }
+    }
     return leaves;
 }
