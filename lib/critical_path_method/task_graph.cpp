@@ -77,6 +77,38 @@ void TaskGraph::calculate_backward()
     }
 }
 
+string TaskGraph::calculate_critical_path()
+{
+    const auto roots = get_roots();
+    PathNode critical_node = *roots[0];
+    string critical_path;
+    for (const auto& root : roots)
+    {
+        if (root->backward == 0)
+        {
+            critical_node = *root;
+            break;
+        }
+    }
+    critical_path += critical_node.task_name;
+    stack<PathNode> expand_backward;
+    expand_backward.push(critical_node);
+    while (!expand_backward.empty())
+    {
+        auto current = expand_backward.top();
+        expand_backward.pop();
+        for (auto& predecessor : current.successors)
+        {
+            if (predecessor.get().backward == current.forward)
+            {
+                critical_path += "->" + predecessor.get().task_name;
+                expand_backward.push(predecessor);
+            }
+        }
+    }
+    return critical_path;
+}
+
 vector<PathNode*> TaskGraph::get_roots()
 {
     vector<PathNode*> roots;
