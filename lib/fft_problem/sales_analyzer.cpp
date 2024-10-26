@@ -88,7 +88,7 @@ vector<tuple<string,array<int,3>>> sales_analyzer(const vector<vector<double>>& 
 array<int, 3> frequency_formatter(const int frequency)
 {
     const int months = frequency / 30;
-    const int weeks = frequency / 7;
+    const int weeks = (frequency - months * 30) / 7;
     const int days = frequency - months * 30 - weeks * 7;
 
     return {months, weeks, days};
