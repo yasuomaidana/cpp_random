@@ -4,7 +4,7 @@
 
 #include "sales_analyzer.h"
 
-array<int,2> product_magnitude_frequency(const vector<complex<double>>& fft_result)
+array<int, 2> product_magnitude_frequency(const vector<complex<double>>& fft_result)
 {
     constexpr double f_s = 1.0 / 86400; // Sampling frequency in Hz (1/day)
     const size_t n = fft_result.size();
@@ -34,4 +34,62 @@ array<int,2> product_magnitude_frequency(const vector<complex<double>>& fft_resu
 
     const int product_sales = static_cast<int>(product_sale_amplitude) + static_cast<int>(average_sales_per_day);
     return {product_sales, product_frequency_in_days};
+}
+
+vector<tuple<string,array<int,3>>> sales_analyzer(const vector<vector<double>>& sales_data,
+                                                           const vector<string>& products)
+{
+    vector<array<int, 2>> product_analysis;
+    vector<tuple<string, array<int, 3>>> result{};
+    constexpr int frequency_limit = 365;
+    for (const auto& product : sales_data)
+    {
+        auto fft_result = fft_real(product);
+        product_analysis.push_back(product_magnitude_frequency(fft_result));
+    }
+    int max_product_sales_index = -1;
+    int max_product_sales = 0;
+    int fastest_product_index = -1;
+    int fastest_product = frequency_limit;
+    int i = 0;
+    for (const auto& product_result : product_analysis)
+    {
+        if (product_result[1] < frequency_limit)
+        {
+            if (product_result[0] > max_product_sales)
+            {
+                max_product_sales_index = i;
+                max_product_sales = product_result[0];
+            }
+            if (product_result[1] < fastest_product)
+            {
+                fastest_product_index = i;
+                fastest_product = product_result[1];
+            }
+        }
+        i++;
+    }
+    if (max_product_sales_index != -1)
+    {
+        result.push_back({
+            products[max_product_sales_index], frequency_formatter(product_analysis[max_product_sales_index][1])
+        });
+    }
+    if (fastest_product_index != -1 && fastest_product_index != max_product_sales_index)
+    {
+        result.push_back({
+            products[fastest_product_index], frequency_formatter(product_analysis[fastest_product_index][1])
+        });
+    }
+
+    return result;
+}
+
+array<int, 3> frequency_formatter(const int frequency)
+{
+    const int months = frequency / 30;
+    const int weeks = frequency / 7;
+    const int days = frequency - months * 30 - weeks * 7;
+
+    return {months, weeks, days};
 }
